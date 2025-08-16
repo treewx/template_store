@@ -68,8 +68,63 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design User Authentication Data Models",
+            "description": "Define and implement database models for users, including fields for email, hashed password, email verification status, and password reset tokens.",
+            "dependencies": [],
+            "details": "Use SQLAlchemy or equivalent ORM to create the User model with fields: id, email, hashed_password, email_verified, and fields for storing verification and reset tokens as needed.",
+            "status": "done",
+            "testStrategy": "Run migration scripts and verify table creation. Insert and query test records for user registration, email verification, and password reset tokens."
+          },
+          {
+            "id": 2,
+            "title": "Implement Secure User Registration and Login",
+            "description": "Develop endpoints for user registration and login using Flask-Login or FastAPI Users, ensuring password hashing with bcrypt or Argon2 and enforcing minimum 8-character alphanumeric passwords.",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "Validate registration input, hash passwords before storing, and use authentication middleware for login. Reject passwords not meeting complexity requirements.",
+            "status": "done",
+            "testStrategy": "Unit test registration and login endpoints with valid and invalid data. Attempt logins with correct and incorrect credentials."
+          },
+          {
+            "id": 3,
+            "title": "Develop Email Verification Flow",
+            "description": "Implement email verification by generating a unique token, sending a verification link to the user's email, and verifying the token upon user action.",
+            "dependencies": [
+              "2.2"
+            ],
+            "details": "Generate secure, time-limited tokens for email verification. Integrate with an email provider to send verification links. Update user status upon successful verification.",
+            "status": "done",
+            "testStrategy": "Test email delivery, token validation, and status updates. Attempt logins with unverified and verified emails."
+          },
+          {
+            "id": 4,
+            "title": "Implement Password Reset via Email",
+            "description": "Enable users to request a password reset by email, generate a secure reset token, and allow password update through a token-protected endpoint.",
+            "dependencies": [
+              "2.2"
+            ],
+            "details": "Create endpoints for requesting password reset and for submitting a new password. Ensure tokens are single-use and expire after a set period.",
+            "status": "done",
+            "testStrategy": "Test password reset requests with valid and invalid emails, token expiration, and password update flows."
+          },
+          {
+            "id": 5,
+            "title": "Integrate and Test Complete Authentication Flows",
+            "description": "Combine registration, login, email verification, and password reset into a cohesive authentication system and perform end-to-end testing.",
+            "dependencies": [
+              "2.3",
+              "2.4"
+            ],
+            "details": "Ensure all flows interact correctly, enforce security best practices, and handle edge cases such as repeated requests and invalid tokens.",
+            "status": "done",
+            "testStrategy": "Perform integration tests covering all authentication scenarios, including registration, login, verification, and password reset, with both valid and invalid inputs."
+          }
+        ]
       },
       {
         "id": 3,
@@ -81,8 +136,62 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Entity-Relationship Model",
+            "description": "Analyze requirements and design the entity-relationship (ER) model for User, Property, Transaction, and NotificationLog, specifying relationships and cardinality.",
+            "dependencies": [],
+            "details": "Map out how User, Property, Transaction, and NotificationLog relate to each other, including foreign key relationships and required fields.",
+            "status": "done",
+            "testStrategy": "Review ER diagram for completeness and correctness with stakeholders."
+          },
+          {
+            "id": 2,
+            "title": "Specify Table Schemas and Constraints",
+            "description": "Translate the ER model into detailed PostgreSQL table schemas, defining columns, data types, primary keys, foreign keys, and constraints for each model.",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "Ensure normalization (at least third normal form), add constraints (e.g., NOT NULL, UNIQUE), and avoid storing full addresses in a single field.",
+            "status": "done",
+            "testStrategy": "Validate schema definitions against requirements and best practices; peer review for normalization and constraint coverage."
+          },
+          {
+            "id": 3,
+            "title": "Implement Models Using ORM",
+            "description": "Create SQLAlchemy (or equivalent ORM) model classes for each table, reflecting the defined schema and relationships.",
+            "dependencies": [
+              "3.2"
+            ],
+            "details": "Define Python classes for User, Property, Transaction, and NotificationLog with appropriate field types, relationships, and constraints.",
+            "status": "done",
+            "testStrategy": "Run ORM model validation and ensure models match the intended schema."
+          },
+          {
+            "id": 4,
+            "title": "Generate and Apply Database Migrations",
+            "description": "Use the ORM's migration tool to generate migration scripts and apply them to create the actual PostgreSQL tables.",
+            "dependencies": [
+              "3.3"
+            ],
+            "details": "Generate migration scripts (e.g., with Alembic), review for accuracy, and apply to the development database.",
+            "status": "done",
+            "testStrategy": "Run migration scripts on a clean database and verify successful table creation."
+          },
+          {
+            "id": 5,
+            "title": "Verify Schema Functionality with Test Data",
+            "description": "Insert and query test records for each model to ensure tables, relationships, and constraints function as intended.",
+            "dependencies": [
+              "3.4"
+            ],
+            "details": "Write and execute test scripts to insert, update, and query data, checking for constraint enforcement and relational integrity.",
+            "status": "done",
+            "testStrategy": "Automate tests to cover all CRUD operations and edge cases for each model."
+          }
+        ]
       },
       {
         "id": 4,
@@ -95,8 +204,67 @@
           2,
           3
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design RESTful API Endpoints for Property CRUD",
+            "description": "Define and implement RESTful API endpoints to create, read, update, and delete rental property records, following standard HTTP methods (GET, POST, PUT/PATCH, DELETE).",
+            "dependencies": [],
+            "details": "Endpoints should include: GET /properties, POST /properties, GET /properties/:id, PUT/PATCH /properties/:id, DELETE /properties/:id. Ensure endpoints are structured for scalability and maintainability.",
+            "status": "done",
+            "testStrategy": "Verify each endpoint with valid and invalid requests. Confirm correct HTTP status codes and error handling."
+          },
+          {
+            "id": 2,
+            "title": "Implement Input Validation for Property Data",
+            "description": "Add validation logic for property fields such as rent amount, frequency, and due day to ensure data integrity and prevent invalid submissions.",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Use server-side validation to check for required fields, correct data types, and acceptable value ranges. Return standardized error responses for invalid input.",
+            "status": "done",
+            "testStrategy": "Test API endpoints with various valid and invalid payloads. Confirm validation errors are returned as expected."
+          },
+          {
+            "id": 3,
+            "title": "Enforce Property Ownership and User Authentication",
+            "description": "Ensure that property records are linked to authenticated users and restrict CRUD operations to the owner of each property.",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Integrate authentication middleware to verify user identity. Implement ownership checks so users can only access and modify their own properties.",
+            "status": "done",
+            "testStrategy": "Attempt CRUD operations as authenticated and unauthenticated users. Verify access control and property visibility per user."
+          },
+          {
+            "id": 4,
+            "title": "Develop Frontend Forms for Property Entry and Editing",
+            "description": "Create user interface forms for adding and editing property records, integrating with the backend API and supporting validation feedback.",
+            "dependencies": [
+              "4.1",
+              "4.2",
+              "4.3"
+            ],
+            "details": "Design responsive forms for property creation and editing. Implement client-side validation and display server-side validation errors. Ensure seamless user experience.",
+            "status": "done",
+            "testStrategy": "Perform UI tests for property add/edit flows. Validate form behavior with correct and incorrect input."
+          },
+          {
+            "id": 5,
+            "title": "Test End-to-End Property CRUD Functionality",
+            "description": "Conduct comprehensive testing of the property CRUD workflow, covering API, validation, authentication, and frontend integration.",
+            "dependencies": [
+              "4.1",
+              "4.2",
+              "4.3",
+              "4.4"
+            ],
+            "details": "Write and execute test cases for all CRUD operations, including edge cases and error scenarios. Verify data consistency and user-specific property access.",
+            "status": "done",
+            "testStrategy": "Run automated and manual tests for API endpoints and UI flows. Confirm correct behavior for property creation, reading, updating, and deletion."
+          }
+        ]
       },
       {
         "id": 5,
@@ -109,8 +277,65 @@
           2,
           3
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Akahu OAuth Account Linking",
+            "description": "Develop the OAuth flow to allow users to securely link their Akahu account, obtaining and storing the necessary tokens for API access.",
+            "dependencies": [],
+            "details": "Register the application with Akahu to obtain App ID and Secret. Implement the OAuth2 authorization process, ensuring secure handling of secrets and redirect flows. Store user tokens securely for future API calls.",
+            "status": "pending",
+            "testStrategy": "Mock Akahu OAuth endpoints. Test account linking with valid and invalid credentials. Verify tokens are securely stored and retrievable."
+          },
+          {
+            "id": 2,
+            "title": "Fetch Recent Transactions from Akahu API",
+            "description": "Use the Akahu API to retrieve bank transactions from the past 2 days for linked accounts.",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "Utilize the stored user tokens to call Akahu's transactions endpoint, filtering for transactions within the last 2 days. Ensure API requests are authenticated and paginated as needed.",
+            "status": "pending",
+            "testStrategy": "Mock Akahu transaction responses. Test fetching with various date ranges and account scenarios. Validate correct API usage and data retrieval."
+          },
+          {
+            "id": 3,
+            "title": "Store Transactions Securely in Database",
+            "description": "Persist the fetched transactions in the database, associating them with the correct user and property records.",
+            "dependencies": [
+              "5.2"
+            ],
+            "details": "Map Akahu transaction data to the Transaction model. Ensure transactions are linked to the correct Property and User. Handle duplicate transaction prevention and data integrity.",
+            "status": "pending",
+            "testStrategy": "Insert mock transactions and verify correct storage, association, and deduplication. Query database to confirm data integrity."
+          },
+          {
+            "id": 4,
+            "title": "Handle Akahu API Errors and Token Refresh",
+            "description": "Implement robust error handling for Akahu API failures and automate token refresh when required.",
+            "dependencies": [
+              "5.2"
+            ],
+            "details": "Detect and log API errors, including authentication failures, rate limits, and network issues. Implement token refresh logic per Akahu's OAuth2 protocol and retry failed requests as appropriate.",
+            "status": "pending",
+            "testStrategy": "Simulate API errors and expired tokens. Verify error logging, user notification (if needed), and successful token refresh and retry."
+          },
+          {
+            "id": 5,
+            "title": "Verify End-to-End Integration and Data Association",
+            "description": "Test the complete flow from account linking to transaction storage, ensuring transactions are correctly matched for rent purposes.",
+            "dependencies": [
+              "5.1",
+              "5.2",
+              "5.3",
+              "5.4"
+            ],
+            "details": "Perform integration tests covering OAuth linking, transaction fetching, error handling, and database storage. Confirm that transactions are associated with the correct properties and ready for rent matching logic.",
+            "status": "pending",
+            "testStrategy": "Run end-to-end tests with mocked Akahu responses. Validate that transactions appear in the database and are linked to the correct user and property. Check for edge cases and data consistency."
+          }
+        ]
       },
       {
         "id": 6,
@@ -183,7 +408,7 @@
     ],
     "metadata": {
       "created": "2025-08-16T03:58:33.712Z",
-      "updated": "2025-08-16T04:26:37.170Z",
+      "updated": "2025-08-16T05:13:51.170Z",
       "description": "Tasks for master context"
     }
   }
