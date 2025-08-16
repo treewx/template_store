@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Check - NZ Landlord Tool</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Rent Check</h1>
+            <p>Simple rent tracking for NZ landlords</p>
+        </header>
+        
+        <main>
+            <div class="welcome-card">
+                <h2>Welcome to Rent Check</h2>
+                <p>Never miss a late rent payment again. Connect your bank account and get alerts when rent doesn't arrive on time.</p>
+                
+                <div class="auth-buttons">
+                    <button class="btn btn-primary" onclick="showLogin()">Log In</button>
+                    <button class="btn btn-secondary" onclick="showSignup()">Sign Up</button>
+                </div>
+            </div>
+            
+            <div id="loginForm" class="auth-form hidden">
+                <h3>Log In</h3>
+                <form>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit" class="btn btn-primary">Log In</button>
+                </form>
+                <p><a href="#" onclick="showSignup()">Don't have an account? Sign up</a></p>
+            </div>
+            
+            <div id="signupForm" class="auth-form hidden">
+                <h3>Create Account</h3>
+                <form>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password (min 8 characters)" required minlength="8">
+                    <input type="password" placeholder="Confirm Password" required>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+                <p><a href="#" onclick="showLogin()">Already have an account? Log in</a></p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 Rent Check. Built for NZ landlords.</p>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<context>
+Overview
+
+This is a simple rent-checking web application designed for New Zealand landlords. It solves the problem of missed rent payments going unnoticed by automating rent tracking and sending alerts when rent isn’t received on the due date. The tool is aimed at private landlords managing a small-to-medium portfolio who want a lightweight, reliable system that plugs into their bank account (via Akahu) to monitor rent inflows.
+
+Unlike full-fledged property management platforms, this tool is laser-focused on one job: letting landlords know if rent hasn’t arrived.
+
+Core Features
+1. User Registration and Login
+
+What it does: Allows users to create an account with email and password.
+
+Why it's important: Provides secure access and ties rent alerts to individual users.
+
+How it works: Users sign up with an email, verify the email, and then log in with a secure password (minimum 8 alphanumeric characters). A "Forgot Password" flow sends reset links via email.
+
+2. Property Input
+
+What it does: Lets users enter details about each rental property.
+
+Why it's important: The app needs to know what rent is due, when it’s due, and how much.
+
+How it works: A form captures property name, address, rent amount, rent frequency (weekly/fortnightly), due day, and tenant nickname (optional).
+
+3. Bank Feed Integration (via Akahu)
+
+What it does: Connects to the user’s bank account to read incoming payments.
+
+Why it's important: Automatically checks for rent payments based on matching rules.
+
+How it works: Uses the Akahu API to pull recent transactions. Data is stored securely and matched against rent due records.
+
+4. Rent Check Logic
+
+What it does: Identifies whether rent has arrived on the expected day.
+
+Why it's important: Keeps landlords informed and reduces manual checking.
+
+How it works: Every day, a simple job checks if the expected rent has come in. If not, it flags it as missed and sends an alert.
+
+5. Email Notifications
+
+What it does: Notifies users via email when rent hasn’t come in.
+
+Why it's important: Alerts allow landlords to follow up promptly.
+
+How it works: Uses SMTP or transactional email service to notify users the morning after a missed payment.
+
+User Experience
+User Personas
+
+Solo Landlord: Manages 1–5 properties and wants a lightweight solution.
+
+Small Portfolio Owner: Has 5–20 properties, needs quick visibility but doesn’t want the overhead of big property software.
+
+Key User Flows
+
+Sign up → Verify email → Log in → Add properties → Link bank → Get notified
+
+Forgot password → Receive email link → Reset password
+
+Add/Remove/Edit properties
+
+Receive email: “Rent not received for [Property Name] on [Date]”
+
+UI/UX Considerations
+
+Mobile-first, clean and minimal dashboard
+
+Emphasis on clarity: is rent received or missed?
+
+Token-style visual timeline for payments (future idea)
+
+Friendly and professional tone in UI and emails
+
+</context> <PRD>
+Technical Architecture
+System Components
+
+Frontend: React or plain HTML/JS for simplicity
+
+Backend: Flask or FastAPI
+
+Database: PostgreSQL (preferred over SQLite for production)
+
+Task Scheduler: Cron job or Celery for daily rent checks
+
+Email Service: SMTP or transactional provider (e.g. Postmark, SendGrid)
+
+Data Models
+
+User (id, email, hashed password, email_verified)
+
+Property (id, user_id, rent_amount, due_day, frequency)
+
+Transaction (id, property_id, date, amount, matched)
+
+NotificationLog (id, user_id, property_id, date_sent)
+
+APIs and Integrations
+
+Akahu: For accessing users’ bank transactions
+
+Email service: To send alerts
+
+Optional: Google Cloud Functions or AWS Lambda for scheduling logic
+
+Infrastructure Requirements
+
+Hosting: Railway or Fly.io for lightweight hosting
+
+Data residency: Ideally NZ-based or timezone-aligned host
+
+SSL certificate (Let's Encrypt)
+
+Development Roadmap
+MVP Requirements
+
+Secure user auth (register/login/email verify/password reset)
+
+Property CRUD (create, read, update, delete)
+
+Akahu bank integration
+
+Rent-check job (match incoming payments to expected rent)
+
+Email alert system for missed rent
+
+Future Enhancements
+
+Drag-and-drop UI for visual rent tracking
+
+Multi-tenant support (e.g. 2 tenants paying half each)
+
+SMS notifications
+
+Optional custom domains for power users
+
+Weekly digest emails
+
+Logical Dependency Chain
+
+Foundation
+
+Set up backend, database schema, and user auth
+
+Build frontend login and property entry forms
+
+Integrate Akahu for bank connectivity
+
+First Visible Output
+
+Once users can enter properties and see them listed
+
+Connect bank and see matched/unmatched rent payments
+
+Pacing and Scoping
+
+Keep matching logic simple: date ±1 day, amount within margin
+
+Delay “visual UI” or drag-drop features to post-MVP
+
+Risks and Mitigations
+Technical Challenges
+
+Akahu transaction matching may be inconsistent
+→ Solution: Allow some user override of matches
+
+Hosting in wrong timezone could delay emails
+→ Solution: Specify timezone in scheduler or choose NZ-based host
+
+MVP Scope Creep
+
+Risk of adding too many features too early
+→ Solution: Stick to one job well—email if rent is missed
+
+Resource Constraints
+
+Single developer building this
+→ Solution: Use minimal viable tech stack (Flask, Railway, Akahu)
+
+Appendix
+Research Findings
+
+NZ landlords often manually check bank statements weekly
+
+Most want email alerts rather than installing another app
+
+Technical Specs
+
+Emails sent at 8:00 AM NZST if rent not seen for the day before
+
+Password hashing using bcrypt or Argon2
+
+Akahu API polling set to check past 2 days of transactions
+
+</PRD>

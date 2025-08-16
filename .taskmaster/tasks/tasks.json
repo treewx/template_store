@@ -1,0 +1,190 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Project and Set Up Repository",
+        "description": "Create the project repository, initialize backend (Flask or FastAPI), frontend (React or HTML/JS), and configure PostgreSQL database.",
+        "details": "Set up version control (Git). Scaffold backend using Flask or FastAPI. Scaffold frontend using React or plain HTML/JS. Configure PostgreSQL connection. Set up environment variables for secrets and configuration. Ensure project structure supports modular development.",
+        "testStrategy": "Verify repository cloning, backend and frontend startup, and database connectivity with test queries.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Git Repository and Initialize Version Control",
+            "description": "Set up a new Git repository for the project, configure .gitignore, and make the initial commit.",
+            "dependencies": [],
+            "details": "Create a new directory for the project. Run 'git init' to initialize version control. Add a .gitignore file to exclude environment files, node_modules, __pycache__, and other build artifacts. Make an initial commit with the project structure and README.",
+            "status": "done",
+            "testStrategy": "Clone the repository to a separate location and verify that only intended files are tracked."
+          },
+          {
+            "id": 2,
+            "title": "Scaffold Backend with Flask or FastAPI",
+            "description": "Set up the backend using either Flask or FastAPI, including basic app structure and initial endpoint.",
+            "dependencies": [],
+            "details": "Create a backend directory. Set up a Python virtual environment. Install Flask ('pip install flask') or FastAPI ('pip install fastapi uvicorn'). Create main.py with a minimal app and a root endpoint (e.g., '/' returning 'Hello World'). Ensure the backend can be started via 'flask run' or 'uvicorn main:app --reload'.",
+            "status": "done",
+            "testStrategy": "Run the backend server and verify the root endpoint returns the expected response in a browser or via curl."
+          },
+          {
+            "id": 3,
+            "title": "Scaffold Frontend with React or HTML/JS",
+            "description": "Set up the frontend using React or plain HTML/JS, including initial structure and a test page.",
+            "dependencies": [],
+            "details": "Create a frontend directory. For React, use 'npx create-react-app' to scaffold the project. For HTML/JS, create index.html and supporting JS/CSS files. Add a simple landing page that displays a test message. Ensure the frontend can be started with 'npm start' (React) or served via a static server.",
+            "status": "done",
+            "testStrategy": "Start the frontend and verify the test page loads correctly in a browser."
+          },
+          {
+            "id": 4,
+            "title": "Configure PostgreSQL Database Connection",
+            "description": "Set up PostgreSQL locally or via a cloud provider, and configure backend connection settings.",
+            "dependencies": [],
+            "details": "Install PostgreSQL and create a new database for the project. In the backend, install a database driver (e.g., psycopg2 for Flask, asyncpg for FastAPI). Add connection logic to main.py or a config module. Test the connection by running a simple query (e.g., SELECT 1).",
+            "status": "done",
+            "testStrategy": "Run backend code to connect and query the database. Verify successful connection and query execution."
+          },
+          {
+            "id": 5,
+            "title": "Set Up Environment Variables and Modular Project Structure",
+            "description": "Configure environment variables for secrets and settings, and organize project files for modular development.",
+            "dependencies": [],
+            "details": "Create .env files for backend and frontend to store secrets (e.g., DB credentials, API keys). Use libraries like python-dotenv for backend and dotenv for frontend to load variables. Refactor backend and frontend code into modules (e.g., routes, models, components) to support scalable development.",
+            "status": "done",
+            "testStrategy": "Verify environment variables are loaded correctly and not committed to Git. Check that project structure allows for easy addition of new modules and features."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Implement User Authentication and Email Verification",
+        "description": "Develop secure user registration, login, email verification, and password reset flows.",
+        "details": "Use Flask-Login or FastAPI Users for authentication. Store hashed passwords using bcrypt or Argon2. Implement email verification by sending a unique token link. Add password reset via email with secure token. Enforce minimum 8-character alphanumeric passwords.",
+        "testStrategy": "Unit test registration, login, email verification, and password reset endpoints. Attempt logins with unverified and verified emails. Test password reset with valid and invalid tokens.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Design and Implement Database Schema",
+        "description": "Create PostgreSQL tables for User, Property, Transaction, and NotificationLog models.",
+        "details": "Define models: User (id, email, hashed_password, email_verified), Property (id, user_id, rent_amount, due_day, frequency, address, tenant_nickname), Transaction (id, property_id, date, amount, matched), NotificationLog (id, user_id, property_id, date_sent). Use SQLAlchemy or equivalent ORM for migrations.",
+        "testStrategy": "Run migration scripts and verify table creation. Insert and query test records for each model.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Develop Property CRUD Functionality",
+        "description": "Enable users to create, read, update, and delete rental property records.",
+        "details": "Implement RESTful API endpoints for property CRUD. Validate input (rent amount, frequency, due day). Ensure properties are linked to authenticated users. Add frontend forms for property entry and editing.",
+        "testStrategy": "Test API endpoints with valid and invalid data. Verify property visibility per user. UI tests for property add/edit/delete flows.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Integrate Akahu Bank Feed",
+        "description": "Connect to Akahu API to fetch and store recent bank transactions for rent matching.",
+        "details": "Implement OAuth flow for Akahu account linking. Use Akahu API to pull transactions from the past 2 days. Store transactions securely in the database. Handle API errors and token refresh.",
+        "testStrategy": "Mock Akahu API responses for development. Test account linking, transaction fetching, and error handling. Verify transactions are stored and associated with correct properties.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement Rent Matching Logic",
+        "description": "Develop logic to match incoming transactions to expected rent payments for each property.",
+        "details": "For each property, check if a transaction with matching amount (within margin) and date (±1 day of due date) exists. Mark as matched or missed. Allow user override for mismatches. Store match status in Transaction and Property models.",
+        "testStrategy": "Unit test matching logic with various edge cases (partial payments, late payments, overpayments). Simulate user overrides and verify updates.",
+        "priority": "high",
+        "dependencies": [
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Schedule and Run Daily Rent Check Job",
+        "description": "Set up a scheduled job (cron or Celery) to run daily at 8:00 AM NZST to check for missed rent.",
+        "details": "Configure scheduler to trigger rent check logic for all properties. Ensure timezone is set to NZST. Use Railway or Fly.io scheduler, or deploy as a managed cron job. Log job runs and errors.",
+        "testStrategy": "Test job execution at correct time and timezone. Simulate missed and received payments and verify detection. Check logs for job status.",
+        "priority": "high",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Email Notification System",
+        "description": "Send email alerts to users when rent is missed, using SMTP or transactional email provider.",
+        "details": "Integrate with Postmark, SendGrid, or SMTP. Compose professional, friendly email templates. Trigger email on missed rent detection. Log notifications in NotificationLog table. Handle email delivery errors.",
+        "testStrategy": "Send test emails via provider sandbox. Verify email content, delivery, and logging. Simulate delivery failures and check error handling.",
+        "priority": "high",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Build Mobile-First Frontend Dashboard",
+        "description": "Develop a clean, minimal dashboard for property management and rent status visibility.",
+        "details": "Design responsive UI with clear indicators for rent received/missed. Implement property list, add/edit forms, and rent status display. Use token-style visual timeline for payments as a placeholder for future enhancements.",
+        "testStrategy": "Manual and automated UI tests on mobile and desktop. Verify clarity of rent status and usability of property management flows.",
+        "priority": "medium",
+        "dependencies": [
+          4,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Deploy Application with SSL and NZ Timezone Alignment",
+        "description": "Deploy backend and frontend to Railway or Fly.io with SSL (Let's Encrypt) and ensure NZ timezone alignment.",
+        "details": "Set up CI/CD pipeline for deployment. Configure Let's Encrypt SSL certificates. Set server timezone to NZST. Verify Akahu and email integrations work in production. Ensure data residency and compliance as feasible.",
+        "testStrategy": "End-to-end smoke tests in production. Verify SSL, correct timezone in logs and emails, and full user flow from registration to notification.",
+        "priority": "high",
+        "dependencies": [
+          8,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-16T03:58:33.712Z",
+      "updated": "2025-08-16T04:26:37.170Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
