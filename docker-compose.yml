@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@db:5432/rentcheck
+      - SECRET_KEY=${SECRET_KEY}
+      - AKAHU_CLIENT_ID=${AKAHU_CLIENT_ID}
+      - AKAHU_CLIENT_SECRET=${AKAHU_CLIENT_SECRET}
+      - MAIL_SERVER=${MAIL_SERVER}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USE_TLS=${MAIL_USE_TLS}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - FRONTEND_URL=${FRONTEND_URL}
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+    command: python app.py
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=rentcheck
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:

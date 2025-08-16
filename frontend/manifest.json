@@ -1,0 +1,22 @@
+{
+  "name": "Rent Check - NZ Landlord Tool",
+  "short_name": "Rent Check",
+  "description": "Simple rent tracking for New Zealand landlords",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#3498db",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%233498db'/><text x='50%' y='50%' font-size='120' text-anchor='middle' dominant-baseline='central'>🏠</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%233498db'/><text x='50%' y='50%' font-size='320' text-anchor='middle' dominant-baseline='central'>🏠</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

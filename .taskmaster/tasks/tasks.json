@@ -277,7 +277,7 @@
           2,
           3
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -285,7 +285,7 @@
             "description": "Develop the OAuth flow to allow users to securely link their Akahu account, obtaining and storing the necessary tokens for API access.",
             "dependencies": [],
             "details": "Register the application with Akahu to obtain App ID and Secret. Implement the OAuth2 authorization process, ensuring secure handling of secrets and redirect flows. Store user tokens securely for future API calls.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Mock Akahu OAuth endpoints. Test account linking with valid and invalid credentials. Verify tokens are securely stored and retrievable."
           },
           {
@@ -296,7 +296,7 @@
               "5.1"
             ],
             "details": "Utilize the stored user tokens to call Akahu's transactions endpoint, filtering for transactions within the last 2 days. Ensure API requests are authenticated and paginated as needed.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Mock Akahu transaction responses. Test fetching with various date ranges and account scenarios. Validate correct API usage and data retrieval."
           },
           {
@@ -307,7 +307,7 @@
               "5.2"
             ],
             "details": "Map Akahu transaction data to the Transaction model. Ensure transactions are linked to the correct Property and User. Handle duplicate transaction prevention and data integrity.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Insert mock transactions and verify correct storage, association, and deduplication. Query database to confirm data integrity."
           },
           {
@@ -318,7 +318,7 @@
               "5.2"
             ],
             "details": "Detect and log API errors, including authentication failures, rate limits, and network issues. Implement token refresh logic per Akahu's OAuth2 protocol and retry failed requests as appropriate.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate API errors and expired tokens. Verify error logging, user notification (if needed), and successful token refresh and retry."
           },
           {
@@ -332,7 +332,7 @@
               "5.4"
             ],
             "details": "Perform integration tests covering OAuth linking, transaction fetching, error handling, and database storage. Confirm that transactions are associated with the correct properties and ready for rent matching logic.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Run end-to-end tests with mocked Akahu responses. Validate that transactions appear in the database and are linked to the correct user and property. Check for edge cases and data consistency."
           }
         ]
@@ -348,7 +348,7 @@
           4,
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -361,7 +361,7 @@
         "dependencies": [
           6
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -374,7 +374,7 @@
         "dependencies": [
           7
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -388,7 +388,7 @@
           4,
           6
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -402,13 +402,13 @@
           8,
           9
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-08-16T03:58:33.712Z",
-      "updated": "2025-08-16T05:13:51.170Z",
+      "updated": "2025-08-16T05:17:00.246Z",
       "description": "Tasks for master context"
     }
   }
