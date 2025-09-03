@@ -1,17 +1,26 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import sqlite3
 import os
 from config import Config
 
 def get_db_connection():
     """Get a database connection using configuration"""
     try:
-        conn = psycopg2.connect(
-            Config.DATABASE_URL,
-            cursor_factory=RealDictCursor
-        )
-        return conn
-    except psycopg2.Error as e:
+        if Config.DATABASE_URL.startswith('sqlite'):
+            # SQLite connection
+            db_path = Config.DATABASE_URL.replace('sqlite:///', '')
+            conn = sqlite3.connect(db_path)
+            conn.row_factory = sqlite3.Row
+            return conn
+        else:
+            # PostgreSQL connection
+            conn = psycopg2.connect(
+                Config.DATABASE_URL,
+                cursor_factory=RealDictCursor
+            )
+            return conn
+    except Exception as e:
         print(f"Database connection error: {e}")
         return None
 
