@@ -1,11 +1,15 @@
 import bcrypt
 from datetime import datetime, timedelta
 from itsdangerous import URLSafeTimedSerializer
-from database import get_db_connection
+
+# Use SQLite for demo
+from database_sqlite import get_db_connection
+DATABASE_TYPE = "SQLite"
 
 class User:
     def __init__(self, id=None, email=None, password_hash=None, email_verified=False, 
-                 verification_token=None, reset_token=None, reset_token_expires=None, created_at=None):
+                 verification_token=None, reset_token=None, reset_token_expires=None, 
+                 akahu_access_token=None, akahu_user_id=None, bank_connected=False, created_at=None):
         self.id = id
         self.email = email
         self.password_hash = password_hash
@@ -13,6 +17,9 @@ class User:
         self.verification_token = verification_token
         self.reset_token = reset_token
         self.reset_token_expires = reset_token_expires
+        self.akahu_access_token = akahu_access_token
+        self.akahu_user_id = akahu_user_id
+        self.bank_connected = bank_connected
         self.created_at = created_at
     
     @staticmethod
@@ -52,25 +59,42 @@ class User:
         
         try:
             password_hash = User.hash_password(password)
-            with conn.cursor() as cursor:
+            cursor = conn.cursor()
+            
+            if DATABASE_TYPE == "PostgreSQL":
+                # PostgreSQL version with RETURNING clause
                 cursor.execute("""
                     INSERT INTO users (email, password_hash, email_verified, created_at)
                     VALUES (%s, %s, %s, %s)
                     RETURNING id, email, password_hash, email_verified, created_at
                 """, (email, password_hash, False, datetime.now()))
-                
                 result = cursor.fetchone()
-                conn.commit()
+            else:
+                # SQLite version
+                cursor.execute("""
+                    INSERT INTO users (email, password_hash, email_verified, created_at)
+                    VALUES (?, ?, ?, ?)
+                """, (email, password_hash, False, datetime.now()))
                 
-                if result:
-                    return User(
-                        id=result['id'],
-                        email=result['email'],
-                        password_hash=result['password_hash'],
-                        email_verified=result['email_verified'],
-                        created_at=result['created_at']
-                    )
-                return None
+                # Get the inserted record
+                user_id = cursor.lastrowid
+                cursor.execute("""
+                    SELECT id, email, password_hash, email_verified, created_at
+                    FROM users WHERE id = ?
+                """, (user_id,))
+                result = cursor.fetchone()
+            
+            conn.commit()
+            
+            if result:
+                return User(
+                    id=result['id'],
+                    email=result['email'],
+                    password_hash=result['password_hash'],
+                    email_verified=result['email_verified'],
+                    created_at=result['created_at']
+                )
+            return None
         except Exception as e:
             print(f"Error creating user: {e}")
             conn.rollback()
@@ -86,26 +110,40 @@ class User:
             return None
         
         try:
-            with conn.cursor() as cursor:
+            cursor = conn.cursor()
+            
+            if DATABASE_TYPE == "PostgreSQL":
+                # PostgreSQL version
                 cursor.execute("""
                     SELECT id, email, password_hash, email_verified, verification_token,
                            reset_token, reset_token_expires, created_at
                     FROM users WHERE email = %s
                 """, (email,))
-                
-                result = cursor.fetchone()
-                if result:
-                    return User(
-                        id=result['id'],
-                        email=result['email'],
-                        password_hash=result['password_hash'],
-                        email_verified=result['email_verified'],
-                        verification_token=result.get('verification_token'),
-                        reset_token=result.get('reset_token'),
-                        reset_token_expires=result.get('reset_token_expires'),
-                        created_at=result['created_at']
-                    )
-                return None
+            else:
+                # SQLite version
+                cursor.execute("""
+                    SELECT id, email, password_hash, email_verified, verification_token,
+                           reset_token, reset_token_expires, akahu_access_token, 
+                           akahu_user_id, bank_connected, created_at
+                    FROM users WHERE email = ?
+                """, (email,))
+            
+            result = cursor.fetchone()
+            if result:
+                return User(
+                    id=result['id'],
+                    email=result['email'],
+                    password_hash=result['password_hash'],
+                    email_verified=result['email_verified'],
+                    verification_token=result['verification_token'] if 'verification_token' in result.keys() else None,
+                    reset_token=result['reset_token'] if 'reset_token' in result.keys() else None,
+                    reset_token_expires=result['reset_token_expires'] if 'reset_token_expires' in result.keys() else None,
+                    akahu_access_token=result['akahu_access_token'] if 'akahu_access_token' in result.keys() else None,
+                    akahu_user_id=result['akahu_user_id'] if 'akahu_user_id' in result.keys() else None,
+                    bank_connected=result['bank_connected'] if 'bank_connected' in result.keys() else False,
+                    created_at=result['created_at']
+                )
+            return None
         except Exception as e:
             print(f"Error getting user by email: {e}")
             return None
@@ -120,26 +158,40 @@ class User:
             return None
         
         try:
-            with conn.cursor() as cursor:
+            cursor = conn.cursor()
+            
+            if DATABASE_TYPE == "PostgreSQL":
+                # PostgreSQL version
                 cursor.execute("""
                     SELECT id, email, password_hash, email_verified, verification_token,
                            reset_token, reset_token_expires, created_at
                     FROM users WHERE id = %s
                 """, (user_id,))
-                
-                result = cursor.fetchone()
-                if result:
-                    return User(
-                        id=result['id'],
-                        email=result['email'],
-                        password_hash=result['password_hash'],
-                        email_verified=result['email_verified'],
-                        verification_token=result.get('verification_token'),
-                        reset_token=result.get('reset_token'),
-                        reset_token_expires=result.get('reset_token_expires'),
-                        created_at=result['created_at']
-                    )
-                return None
+            else:
+                # SQLite version
+                cursor.execute("""
+                    SELECT id, email, password_hash, email_verified, verification_token,
+                           reset_token, reset_token_expires, akahu_access_token,
+                           akahu_user_id, bank_connected, created_at
+                    FROM users WHERE id = ?
+                """, (user_id,))
+            
+            result = cursor.fetchone()
+            if result:
+                return User(
+                    id=result['id'],
+                    email=result['email'],
+                    password_hash=result['password_hash'],
+                    email_verified=result['email_verified'],
+                    verification_token=result['verification_token'] if 'verification_token' in result.keys() else None,
+                    reset_token=result['reset_token'] if 'reset_token' in result.keys() else None,
+                    reset_token_expires=result['reset_token_expires'] if 'reset_token_expires' in result.keys() else None,
+                    akahu_access_token=result['akahu_access_token'] if 'akahu_access_token' in result.keys() else None,
+                    akahu_user_id=result['akahu_user_id'] if 'akahu_user_id' in result.keys() else None,
+                    bank_connected=result['bank_connected'] if 'bank_connected' in result.keys() else False,
+                    created_at=result['created_at']
+                )
+            return None
         except Exception as e:
             print(f"Error getting user by ID: {e}")
             return None
@@ -153,15 +205,23 @@ class User:
             return False
         
         try:
-            with conn.cursor() as cursor:
+            cursor = conn.cursor()
+            
+            if DATABASE_TYPE == "PostgreSQL":
                 cursor.execute("""
                     UPDATE users SET email_verified = %s, verification_token = NULL
                     WHERE id = %s
                 """, (verified, self.id))
-                conn.commit()
-                self.email_verified = verified
-                self.verification_token = None
-                return True
+            else:
+                cursor.execute("""
+                    UPDATE users SET email_verified = ?, verification_token = NULL
+                    WHERE id = ?
+                """, (verified, self.id))
+            
+            conn.commit()
+            self.email_verified = verified
+            self.verification_token = None
+            return True
         except Exception as e:
             print(f"Error updating verification status: {e}")
             conn.rollback()
@@ -253,3 +313,105 @@ class User:
     def get_id(self):
         """Required for Flask-Login"""
         return str(self.id)
+    
+    def store_akahu_credentials(self, access_token, akahu_user_id):
+        """Store Akahu authentication credentials"""
+        conn = get_db_connection()
+        if not conn:
+            return False
+        
+        try:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE users SET akahu_access_token = ?, akahu_user_id = ?, bank_connected = ?
+                WHERE id = ?
+            """, (access_token, akahu_user_id, True, self.id))
+            conn.commit()
+            
+            # Update instance variables
+            self.akahu_access_token = access_token
+            self.akahu_user_id = akahu_user_id
+            self.bank_connected = True
+            return True
+        except Exception as e:
+            print(f"Error storing Akahu credentials: {e}")
+            conn.rollback()
+            return False
+        finally:
+            conn.close()
+    
+    @staticmethod
+    def get_all_with_bank_connected():
+        """Get all users with bank accounts connected"""
+        conn = get_db_connection()
+        if not conn:
+            return []
+        
+        try:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT id, email, password_hash, email_verified, verification_token,
+                       reset_token, reset_token_expires, akahu_access_token,
+                       akahu_user_id, bank_connected, created_at
+                FROM users WHERE bank_connected = ? AND akahu_access_token IS NOT NULL
+            """, (True,))
+            
+            users = []
+            for result in cursor.fetchall():
+                users.append(User(
+                    id=result['id'],
+                    email=result['email'],
+                    password_hash=result['password_hash'],
+                    email_verified=result['email_verified'],
+                    verification_token=result['verification_token'] if 'verification_token' in result.keys() else None,
+                    reset_token=result['reset_token'] if 'reset_token' in result.keys() else None,
+                    reset_token_expires=result['reset_token_expires'] if 'reset_token_expires' in result.keys() else None,
+                    akahu_access_token=result['akahu_access_token'],
+                    akahu_user_id=result['akahu_user_id'],
+                    bank_connected=result['bank_connected'],
+                    created_at=result['created_at']
+                ))
+            return users
+        except Exception as e:
+            print(f"Error getting users with bank connected: {e}")
+            return []
+        finally:
+            conn.close()
+    
+    @staticmethod
+    def get_by_akahu_id(akahu_user_id):
+        """Get user by Akahu user ID"""
+        conn = get_db_connection()
+        if not conn:
+            return None
+        
+        try:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT id, email, password_hash, email_verified, verification_token,
+                       reset_token, reset_token_expires, akahu_access_token,
+                       akahu_user_id, bank_connected, created_at
+                FROM users WHERE akahu_user_id = ?
+            """, (akahu_user_id,))
+            
+            result = cursor.fetchone()
+            if result:
+                return User(
+                    id=result['id'],
+                    email=result['email'],
+                    password_hash=result['password_hash'],
+                    email_verified=result['email_verified'],
+                    verification_token=result['verification_token'] if 'verification_token' in result.keys() else None,
+                    reset_token=result['reset_token'] if 'reset_token' in result.keys() else None,
+                    reset_token_expires=result['reset_token_expires'] if 'reset_token_expires' in result.keys() else None,
+                    akahu_access_token=result['akahu_access_token'],
+                    akahu_user_id=result['akahu_user_id'],
+                    bank_connected=result['bank_connected'],
+                    created_at=result['created_at']
+                )
+            return None
+        except Exception as e:
+            print(f"Error getting user by Akahu ID: {e}")
+            return None
+        finally:
+            conn.close()

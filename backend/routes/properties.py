@@ -10,8 +10,11 @@ def validate_property_data(data):
     errors = []
     
     # Required fields
-    if not data.get('name'):
-        errors.append('Property name is required')
+    if not data.get('keyword'):
+        errors.append('Payment keyword is required')
+    
+    if not data.get('address'):
+        errors.append('Property address is required')
     
     if not data.get('rent_amount'):
         errors.append('Rent amount is required')
@@ -25,13 +28,8 @@ def validate_property_data(data):
     
     if not data.get('due_day'):
         errors.append('Due day is required')
-    else:
-        try:
-            due_day = int(data['due_day'])
-            if due_day < 1 or due_day > 31:
-                errors.append('Due day must be between 1 and 31')
-        except (ValueError, TypeError):
-            errors.append('Due day must be a valid number')
+    elif data['due_day'] not in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
+        errors.append('Due day must be a valid day of the week')
     
     if not data.get('frequency'):
         errors.append('Frequency is required')
@@ -87,10 +85,10 @@ def create_property():
         # Create property
         property_obj = Property.create_property(
             user_id=current_user.id,
-            name=data['name'].strip(),
-            address=data.get('address', '').strip(),
+            keyword=data['keyword'].strip(),
+            address=data['address'].strip(),
             rent_amount=Decimal(str(data['rent_amount'])),
-            due_day=int(data['due_day']),
+            due_day=data['due_day'],
             frequency=data['frequency'],
             tenant_nickname=data.get('tenant_nickname', '').strip() or None
         )
@@ -104,7 +102,9 @@ def create_property():
         }), 201
         
     except Exception as e:
+        import traceback
         print(f"Error creating property: {e}")
+        print(f"Traceback: {traceback.format_exc()}")
         return jsonify({'error': 'Failed to create property'}), 500
 
 @properties_bp.route('/<int:property_id>', methods=['PUT'])
@@ -130,10 +130,10 @@ def update_property(property_id):
         
         # Update property
         success = property_obj.update(
-            name=data['name'].strip(),
-            address=data.get('address', '').strip(),
+            keyword=data['keyword'].strip(),
+            address=data['address'].strip(),
             rent_amount=Decimal(str(data['rent_amount'])),
-            due_day=int(data['due_day']),
+            due_day=data['due_day'],
             frequency=data['frequency'],
             tenant_nickname=data.get('tenant_nickname', '').strip() or None
         )

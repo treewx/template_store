@@ -3,7 +3,10 @@ from models.user import User
 from utils.email_service import mail
 from flask_mail import Message
 from flask import current_app
-from database import get_db_connection
+try:
+    from database import get_db_connection
+except ImportError:
+    from database_sqlite import get_db_connection
 
 class NotificationService:
     @staticmethod

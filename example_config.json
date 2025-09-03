@@ -1,0 +1,105 @@
+{
+  "branding": {
+    "app_name": "TaskFlow Pro",
+    "app_tagline": "Streamline your workflow with intelligent task management",
+    "app_description": "A powerful task and project management platform with AI-powered insights and team collaboration tools.",
+    "app_emoji": "⚡",
+    "company_name": "TaskFlow Inc",
+    "support_email": "support@taskflow.pro",
+    "website_url": "https://taskflow.pro",
+    "meta_title": "TaskFlow Pro - Intelligent Task Management",
+    "meta_description": "Streamline your workflow with intelligent task management and team collaboration",
+    "meta_keywords": "task management, project management, team collaboration, productivity, workflow"
+  },
+  "database": {
+    "default_db_type": "sqlite",
+    "sqlite_db_name": "taskflow.db",
+    "core_tables": [
+      "users",
+      "user_sessions", 
+      "notification_log"
+    ]
+  },
+  "auth": {
+    "require_email_verification": true,
+    "password_min_length": 8,
+    "password_require_numbers": true,
+    "password_require_letters": true,
+    "password_require_symbols": false,
+    "email_verification_token_expires": 86400,
+    "password_reset_token_expires": 3600,
+    "remember_me_duration": 2592000,
+    "session_timeout": 3600
+  },
+  "email": {
+    "enabled": true,
+    "provider": "smtp",
+    "welcome_email_template": "welcome_email.html",
+    "verification_email_template": "verification_email.html",
+    "password_reset_template": "password_reset.html"
+  },
+  "integrations": {
+    "bank_integration_enabled": false,
+    "bank_provider": "akahu",
+    "payment_integration_enabled": true,
+    "payment_provider": "stripe",
+    "analytics_enabled": true,
+    "analytics_provider": "google",
+    "email_marketing_enabled": true,
+    "email_marketing_provider": "mailchimp"
+  },
+  "feature_modules": {
+    "task_management": {
+      "name": "task_management",
+      "display_name": "Task Management",
+      "description": "Create, assign, and track tasks with deadlines and priorities",
+      "enabled": true,
+      "tables": [
+        "projects",
+        "tasks",
+        "task_assignments",
+        "task_comments"
+      ],
+      "api_prefix": "/api",
+      "frontend_routes": [
+        "/dashboard",
+        "/tasks",
+        "/projects"
+      ]
+    },
+    "team_collaboration": {
+      "name": "team_collaboration",
+      "display_name": "Team Collaboration",
+      "description": "Team management, file sharing, and communication tools",
+      "enabled": true,
+      "tables": [
+        "teams",
+        "team_members",
+        "shared_files",
+        "team_messages"
+      ],
+      "api_prefix": "/api",
+      "frontend_routes": [
+        "/team",
+        "/messages",
+        "/files"
+      ]
+    },
+    "analytics_reporting": {
+      "name": "analytics_reporting", 
+      "display_name": "Analytics & Reporting",
+      "description": "Performance metrics, productivity analytics, and custom reports",
+      "enabled": true,
+      "tables": [
+        "activity_logs",
+        "performance_metrics",
+        "custom_reports"
+      ],
+      "api_prefix": "/api",
+      "frontend_routes": [
+        "/analytics",
+        "/reports"
+      ]
+    }
+  }
+}
